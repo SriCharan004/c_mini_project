@@ -103,3 +103,43 @@ void deleteRecord(FILE* fp, int number) {
     fclose(tmpFile);
 }
 
+void registration(void ){
+    FILE *f;
+    f=fopen("user.names","a+b");
+    
+    if(!f){return ;}
+    user new;
+    printf("Enter your name:");
+    fgets(new.name,100,stdin);
+
+    printf("Enter your Adhaar:");
+    scanf("%d",&new.unique_number);
+    
+    printf("Enter your new password:");
+    scanf("%d",&new.password);
+
+    fwrite(&new, sizeof(user), 1, f);
+
+
+    fclose(f);
+}
+
+int isalreadyregistered(int number){
+    
+    FILE *f;
+    f=fopen("user.names","r");
+    
+    if(!f){return 0;}
+
+    int found=0;
+    user new;
+    while(fread(&new,sizeof(user),1,f)==1){
+        
+        if(new.unique_number=number){return 1;}
+
+    }
+
+
+    fclose(f);
+    return 0;
+}

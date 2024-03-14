@@ -24,3 +24,15 @@ void insertflight(FILE* fp);
 void displayflights(FILE* fp);
 
 void modifyschedule(FILE* fp, int number);
+
+void registration(void);
+
+void deleteRecord(FILE* fp, int number);
+
+typedef struct{
+    char name[50];
+    int unique_number;
+    int password; 
+}user;
+
+int isalreadyregistered(int number)

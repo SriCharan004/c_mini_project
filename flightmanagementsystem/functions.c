@@ -131,7 +131,8 @@ void registration(void ){
     fclose(f);
 }
 
-int isalreadyregistered(int number){
+int isalreadyregistered(int number){ // checks user unique number
+
     
     FILE *f;
     f=fopen("user.names","r");
@@ -142,7 +143,7 @@ int isalreadyregistered(int number){
     user new;
     while(fread(&new,sizeof(user),1,f)==1){
         
-        if(new.unique_number=number){return 1;}
+        if(new.unique_number==number){return 1;}
 
     }
 
@@ -162,7 +163,7 @@ int isflightnumberthere(int number){ // checks if htat particular fight is there
     Flight new;
     while(fread(&new,sizeof(user),1,f)==1){
         
-        if(new.Number=number){return 1;}
+        if(new.Number==number){return 1;}
 
     }
 

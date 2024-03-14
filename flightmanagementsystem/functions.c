@@ -86,3 +86,20 @@ void modifyschedule(FILE* fp, int number) {
         printf("Record with Flight number %d not found\n", number);
     }
 }
+
+void deleteRecord(FILE* fp, int number) {
+    Flight record;
+    FILE* tmpFile = tmpfile();
+    rewind(fp);
+    while (fread(&record, sizeof(Flight), 1, fp)) {
+        if (record.Number != number) {
+            fwrite(&record, sizeof(Flight), 1, tmpFile);
+        }
+    }
+    fclose(fp);
+    remove("Flights.txt");
+    rename("tmpFile", "Flights.txt");
+    fp = fopen("Flights.txt", "rb+");
+    fclose(tmpFile);
+}
+

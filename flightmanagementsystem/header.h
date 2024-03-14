@@ -12,6 +12,7 @@ typedef struct{
 
 typedef struct {
     int Number;
+    int maxcapacity;
     int capacity;
     int fare;
 
@@ -27,8 +28,6 @@ void modifyschedule(FILE* fp, int number);
 
 void registration(void);
 
-void deleteRecord(FILE* fp, int number);
-
 typedef struct{
     char name[50];
     int unique_number;
@@ -36,6 +35,20 @@ typedef struct{
     int balance; 
 }user;
 
+
+
+void deleteRecord(FILE* fp, int number);
+void addbalance(user person,int value);
+void canceltickets(user person,int flightnum,int total);
+
 int isalreadyregistered(int number);
 int isflightnumberthere(int number);
 void booktickets(user person);
+
+typedef struct{
+    char USERname[50];
+    int age;
+    char passengername[50];
+
+
+}userbooked;

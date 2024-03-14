@@ -383,7 +383,8 @@ void adminaccess(FILE* fp) {
                 displayflights(fp);
                 break;
             case 3:
-                
+                fclose(fp);
+                fp=fopen("Fligths.txt","r+");
                 printf("Enter the flight number to modify schedule: ");
                 scanf("%d", &flight_number);
                 modifyschedule(fp, flight_number);

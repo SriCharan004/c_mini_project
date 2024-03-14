@@ -19,10 +19,11 @@ int main() {
         scanf("%d", &choice);
         
         switch (choice) {
-
             case 1:
+                adminAccess(); // Placeholder for admin access functionality
                 break;
             case 2:
+                userAccess(); // Placeholder for user access functionality
                 break;
             case 3:
                 fclose(fp);

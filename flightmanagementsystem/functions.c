@@ -118,6 +118,10 @@ void registration(void ){
     printf("Enter your new password:");
     scanf("%d",&new.password);
 
+    printf("Enter your balance:");
+    scanf("%d",&new.balance);
+
+
     fwrite(&new, sizeof(user), 1, f);
 
 
@@ -142,4 +146,67 @@ int isalreadyregistered(int number){
 
     fclose(f);
     return 0;
+}
+
+int isflightnumberthere(int number){ // checks if htat particular fight is there or not
+    
+    FILE *f;
+    f=fopen("Flights.txt","r");
+    
+    if(!f){return 0;}
+
+    int found=0;
+    Flight new;
+    while(fread(&new,sizeof(user),1,f)==1){
+        
+        if(new.Number=number){return 1;}
+
+    }
+
+
+    fclose(f);
+    return 0;
+}
+
+
+
+void booktickets(user person){
+
+    FILE *f;
+    f=fopen("Fligth.txt","r");
+    if(!f){return;}
+    int num;
+    displayflights();
+    
+    FILE *booked;
+    booked=fopen("Booked.txt","a+b");
+    FILE *F2=fopen("Flights.txt","r");
+
+    Flight flight;
+    int totalnum;
+    printf("Enter the flight number:");
+    
+    scanf("%d",&num);
+    
+    if(!isflightnumberthere(num)){printf("Fligt Doesn't exist");}
+
+    else{
+
+        while(fread(&flight,sizeof(Flight),1,F2)==1){
+            if(flight.Number==num){break;}
+        }
+
+        printf("How many tickets do you want?");
+        scanf("%d",&totalnum);
+
+        if(person.balance<flight.fare*totalnum){
+            printf("Sorry you cannot buy the fligth tickets due to isufficient balance:");
+            return;
+        }
+        
+
+
+    }
+
+    fclose(f);
 }

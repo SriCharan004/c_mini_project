@@ -32,7 +32,10 @@ void deleteRecord(FILE* fp, int number);
 typedef struct{
     char name[50];
     int unique_number;
-    int password; 
+    int password;
+    int balance; 
 }user;
 
-int isalreadyregistered(int number)
+int isalreadyregistered(int number);
+int isflightnumberthere(int number);
+void booktickets(user person);

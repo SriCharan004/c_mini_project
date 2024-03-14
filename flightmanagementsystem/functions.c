@@ -7,43 +7,52 @@
     //Add flights
 
 void insertflight(FILE* fp) {
-    
     Flight flightrecord;
    
     printf("Enter flight number: ");
     scanf("%d", &flightrecord.Number);
 
     printf("Enter the maximum capacity:");
-    scanf("%d",&flightrecord.maxcapacity);
-
-    flightrecord.capacity=flightrecord.maxcapacity;
+    scanf("%d", &flightrecord.maxcapacity);
+    flightrecord.capacity = flightrecord.maxcapacity;
 
     printf("Enter the fare:");
-    scanf("%d",&flightrecord.fare);
+    scanf("%d", &flightrecord.fare);
 
+    // Input validation for hours
+    do {
+        printf("Enter the hours (00-23): ");
+        scanf("%d", &flightrecord.S.hours);
+    } while (flightrecord.S.hours < 0 || flightrecord.S.hours > 23);
 
-    printf("Enter the schedule of the flight:\n");    
-    
-    printf("Enter the hours:");
-    scanf("%d",&flightrecord.S.hours);
+    // Input validation for minutes
+    do {
+        printf("Enter the minutes (00-59): ");
+        scanf("%d", &flightrecord.S.min);
+    } while (flightrecord.S.min < 0 || flightrecord.S.min > 59);
 
-    printf("Enter the Minutes:");
-    scanf("%d",&flightrecord.S.min);
+    // Input validation for day
+    do {
+        printf("Enter the day (1-31): ");
+        scanf("%d", &flightrecord.S.day);
+    } while (flightrecord.S.day < 1 || flightrecord.S.day > 31);
 
-    printf("Enter the day:");
-    scanf("%d",&flightrecord.S.day);
+    // Input validation for month
+    do {
+        printf("Enter the month (1-12): ");
+        scanf("%d", &flightrecord.S.month);
+    } while (flightrecord.S.month < 1 || flightrecord.S.month > 12);
 
-    printf("Enter the month:");
-    scanf("%d",&flightrecord.S.month);
-
-    printf("Enter the year:");
-    scanf("%d",&flightrecord.S.year);
-
-
+    // Input validation for year
+    do {
+        printf("Enter the year (greater than 2023): ");
+        scanf("%d", &flightrecord.S.year);
+    } while (flightrecord.S.year <= 2023);
 
     fseek(fp, 0, SEEK_END);
     fwrite(&flightrecord, sizeof(Flight), 1, fp);
 }
+
 
 void displayflights(FILE* fp) {
     Flight record;
@@ -347,11 +356,48 @@ void addbalance(user person,int value) {
  }
 
 
-void adminaccess(){
 
-    
-    printf("Jai sai ram");
-};
 void useraccess(){
         printf("Jai saidd ram");
 };
+
+void adminaccess(FILE* fp) {
+    int admin_choice;
+    int flight_number;
+    int flight_to_delete;
+    while (1) {
+        printf("\n Admin Menu:\n");
+        printf("1. Insert Flight\n");
+        printf("2. Display Flights\n");
+        printf("3. Modify Schedule\n");
+        printf("4. Delete Flight\n");
+        printf("5. Back to Access Menu\n");
+        printf("Enter your choice: ");
+        scanf("%d", &admin_choice);
+        
+        switch (admin_choice) {
+            case 1:
+                insertflight(fp);
+                break;
+            case 2:
+                displayflights(fp);
+                break;
+            case 3:
+                
+                printf("Enter the flight number to modify schedule: ");
+                scanf("%d", &flight_number);
+                modifyschedule(fp, flight_number);
+                break;
+            case 4:
+                
+                printf("Enter the flight number to delete: ");
+                scanf("%d", &flight_to_delete);
+                deleteRecord(fp, flight_to_delete);
+                break;
+            case 5:
+                return;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}

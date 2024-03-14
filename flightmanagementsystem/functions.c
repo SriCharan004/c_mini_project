@@ -345,3 +345,13 @@ void addbalance(user person,int value) {
     }
     fclose(fp);
  }
+
+
+void adminaccess(){
+
+    
+    printf("Jai sai ram");
+};
+void useraccess(){
+        printf("Jai saidd ram");
+};

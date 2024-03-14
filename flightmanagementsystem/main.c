@@ -20,10 +20,12 @@ int main() {
         
         switch (choice) {
             case 1:
-                adminAccess(); // Placeholder for admin access functionality
+                adminaccess();
+           //     printf("sairam"); // Placeholder for admin access functionality
                 break;
             case 2:
-                userAccess(); // Placeholder for user access functionality
+                useraccess();
+//                printf("sairammm"); // Placeholder for user access functionality
                 break;
             case 3:
                 fclose(fp);

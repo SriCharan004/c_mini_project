@@ -35,6 +35,13 @@ typedef struct{
     int balance; 
 }user;
 
+typedef struct{
+    char USERname[50];
+    int age;
+    char passengername[50];
+
+
+}userbooked;
 
 
 void deleteRecord(FILE* fp, int number);
@@ -45,10 +52,6 @@ int isalreadyregistered(int number);
 int isflightnumberthere(int number);
 void booktickets(user person);
 
-typedef struct{
-    char USERname[50];
-    int age;
-    char passengername[50];
 
-
-}userbooked;
+void adminaccess();
+void useraccess();

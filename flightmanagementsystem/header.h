@@ -54,5 +54,5 @@ void booktickets(user person);
 
 
 void adminaccess();
-
+user getUserByNumber(int number);
 void useraccess(void);

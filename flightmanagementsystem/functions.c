@@ -189,7 +189,7 @@ void registration(void) {
     scanf("%s",new.name);
 
     
-    
+    getchar();
     do {
         printf("Enter your Aadhar number: ");
         scanf("%d", &new.unique_number);
@@ -256,7 +256,7 @@ void reducecapacity(int number) {
 void booktickets(user person){
 
     FILE *f;
-    f=fopen("Fligth.txt","r");
+    f=fopen("Flights.txt","r");
     if(!f){return;}
     int num;
     displayflights(f);
@@ -340,54 +340,63 @@ void inccapacity(int number,int total) { // number is fligth number, total means
 
 
 
- void canceltickets(user person,int flightnum,int total){
-    // Add the capacity
-    // delete the names from booked;
-    // add the %fare back;
-
-    Flight usrecancel;
-
-    FILE* tmpFile = tmpfile();
-
-    userbooked subjecttocancel;
-
-    FILE *b;
-    FILE *u;
-    b=fopen("Booked.txt","a+b");
-    u=fopen("Flights.txt","r+b");
-    fseek(b, 0, 0);
+// Function to cancel tickets
+void canceltickets(user person, int flightnum, int total) {
+    // Variables
     int value;
-    while(fread(&subjecttocancel,sizeof(userbooked),1,b)==1){
-        if (subjecttocancel.USERname != person.name) {
-            fwrite(&subjecttocancel, sizeof(subjecttocancel), 1, tmpFile);
+
+    // Open files
+    FILE *b = fopen("Booked.txt", "r+b");
+    FILE *u = fopen("Flights.txt", "r+b");
+    FILE *tmpFile = tmpfile();
+
+    if (!b || !u || !tmpFile) {
+        printf("Error opening files.\n");
+        return;
+    }
+
+    // Delete user's booking from Booked.txt
+    userbooked subjecttocancel;
+    while (fread(&subjecttocancel, sizeof(userbooked), 1, b) == 1) {
+        if (strcmp(subjecttocancel.USERname, person.name) != 0) {
+            fwrite(&subjecttocancel, sizeof(userbooked), 1, tmpFile);
         }
     }
 
-    while(fread(&usrecancel,sizeof(Flight),1,u)==1){
+    // Update flight fare
+    Flight usrecancel;
+    while (fread(&usrecancel, sizeof(Flight), 1, u) == 1) {
         if (usrecancel.Number == flightnum) {
-            value=usrecancel.fare*90/100;
+            value = usrecancel.fare * 90 / 100;
+            usrecancel.fare = value;
+            fseek(u, -sizeof(Flight), SEEK_CUR);
+            fwrite(&usrecancel, sizeof(Flight), 1, u);
             break;
         }
     }
 
+    // Increase capacity
+    // Assuming you have a function named 'inccapacity'
+    inccapacity(flightnum, total);
 
-    inccapacity(flightnum,total);
-    addbalance(person,value);
+    // Add balance
+    // Assuming you have a function named 'addbalance'
+    addbalance(person, value);
 
+    // Close and remove temporary file
+    fclose(b);
+    fclose(u);
+    fclose(tmpFile);
 
     remove("Booked.txt");
     rename("tmpFile", "Booked.txt");
-    fclose(tmpFile);
-    fclose(b);
-    fclose(u);
-
 }
 
 
 void addbalance(user person,int value) { 
     user newone;
     FILE *fp;
-    fp=fopen("user.names","r+");
+    fp=fopen("usernames.txt","r+");
     while (fread(&newone, sizeof(user), 1, fp)) {
         if (newone.unique_number == person.unique_number) {
             
@@ -460,14 +469,20 @@ void useraccess(void) {
         printf("Error opening file.\n");
         return;
     }
-
+    int uni;
+    user person;
     int user_choice;
+    int flightnum,total;
     printf("Please register if you didn't:\n");
     while (1) {
         printf("\n User Menu:\n");
         printf("1. Display Flights\n");
         printf("2. New Register\n");
-        printf("3. Exit\n");
+        printf("3. Book Tickets\n");
+        printf("4. Cancel Tickets\n");
+        printf("5. Add Balance\n");
+
+        printf("6. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &user_choice);
         
@@ -479,10 +494,50 @@ void useraccess(void) {
                 registration();
                 break;
             case 3:
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+                if(!isalreadyregistered(uni)){
+                    printf("Number not found please register:");
+                    break;}
+                person=getUserByNumber(uni);
+
+                booktickets(person);
+                break;
+            case 4:
+                canceltickets(person,flightnum,total);
+                
+                break;
+            case 5:
+                //canceltickets();
+                break;
+            
+            case 6:
                 fclose(fl); // Close the file before returning
                 return;
             default:
                 printf("Invalid choice\n");
         }
     }
+}
+
+
+user getUserByNumber(int number) {
+    FILE *f = fopen("usernames.txt", "rb");
+    if (!f) {
+        printf("Error opening file for reading users.\n");
+        exit(1); // Exit program if file cannot be opened
+    }
+
+    user temp;
+    while (fread(&temp, sizeof(user), 1, f) == 1) {
+        if (temp.unique_number == number) {
+            fclose(f);
+            return temp; // Return the user if found
+        }
+    }
+
+    fclose(f);
+    // If no user with the given unique number is found, return a user with all fields set to zero
+    user emptyUser = { "", 0, 0, 0 };
+    return emptyUser;
 }

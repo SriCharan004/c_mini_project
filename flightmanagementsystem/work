@@ -1,32 +1,55 @@
-void registration() {
-    user new;
-   
-    FILE *f = fopen("usernames.txt", "ab"); // Open file in append binary mode
-    
-    if (!f) {
-        printf("Error opening file for registration.\n");
+void useraccess(void) {
+    FILE *fl;
+    fl = fopen("Flights.txt", "ab+");
+    if (!fl) {
+        printf("Error opening file.\n");
         return;
     }
+    int uni;
+    user person;
+    int user_choice;
+    printf("Please register if you didn't:\n");
+    while (1) {
+        printf("\n User Menu:\n");
+        printf("1. Display Flights\n");
+        printf("2. New Register\n");
+        printf("3. Book Tickets\n");
+        printf("4. Cancel Tickets\n");
+        printf("5. Add Balance\n");
 
-    user new;
-    printf("Enter your name: ");
-    scanf("%s",new.name);
-
-    
-
-    do {
-        printf("Enter your Aadhar number: ");
-        scanf("%d", &new.unique_number);
-        getchar(); // Consume newline character left in input buffer
-    } while (isalreadyregistered(new.unique_number));
-
-    printf("Enter your new password: ");
-    scanf("%d", &new.password);
-
-    printf("Enter your balance: ");
-    scanf("%d", &new.balance);
-
-    fwrite(&new, sizeof(user), 1, f);
-
-    getchar();
-    fclose(f);
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &user_choice);
+        
+        switch (user_choice) {
+            case 1:
+                displayflights(fl);
+                break;
+            case 2:
+                registration();
+                break;
+            case 3:
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+                if(!isalreadyregistered(uni)){
+                    printf("Number not found please register:");
+                    break;}
+                person=getUserByNumber(uni);
+                
+                booktickets(person);
+                break;
+            case 4:
+                canceltickets();
+                break;
+            case 5:
+                canceltickets();
+                break;
+            
+            case 6:
+                fclose(fl); // Close the file before returning
+                return;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}

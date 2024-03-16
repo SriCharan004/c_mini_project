@@ -1,5 +1,5 @@
 #include "header.h"
-
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -157,51 +157,58 @@ FILE* deleteRecord(FILE* fp, int number) {
 
 
 
-void registration(void ){
-    FILE *f;
-    f=fopen("user.names","a+b");
-    
-    if(!f){return ;}
+int isalreadyregistered(int number) {
+    FILE *f = fopen("usernames.txt", "rb");
+    if (!f) {
+        printf("Error opening file for checking existing users.\n");
+        exit(1); // Exit program if file cannot be opened
+    }
+
+    int found = 0;
+    user temp;
+    while (fread(&temp, sizeof(user), 1, f) == 1) {
+        if (temp.unique_number == number) {
+            fclose(f);
+            return 1; // User with the given unique number is already registered
+        }
+    }
+
+    fclose(f);
+    return 0; // User with the given unique number is not registered
+}
+
+void registration(void) {
+    FILE *f = fopen("usernames.txt", "ab"); // Open file in append binary mode
+    if (!f) {
+        printf("Error opening file for registration.\n");
+        return;
+    }
+
     user new;
-    printf("Enter your name:");
-    fgets(new.name,100,stdin);
+    printf("Enter your name: ");
+    scanf("%s",new.name);
 
-    printf("Enter your Adhaar:");
-    scanf("%d",&new.unique_number);
     
-    printf("Enter your new password:");
-    scanf("%d",&new.password);
+    
+    do {
+        printf("Enter your Aadhar number: ");
+        scanf("%d", &new.unique_number);
+         // Consume newline character left in input buffer
+    } while (isalreadyregistered(new.unique_number));
+    getchar();
+    printf("Enter your new password: ");
+    scanf("%d", &new.password);
 
-    printf("Enter your balance:");
-    scanf("%d",&new.balance);
-
+    printf("Enter your balance: ");
+    scanf("%d", &new.balance);
 
     fwrite(&new, sizeof(user), 1, f);
 
-
+    getchar();
     fclose(f);
+
 }
 
-int isalreadyregistered(int number){ // checks user unique number
-
-    
-    FILE *f;
-    f=fopen("user.names","r");
-    
-    if(!f){return 0;}
-
-    int found=0;
-    user new;
-    while(fread(&new,sizeof(user),1,f)==1){
-        
-        if(new.unique_number==number){return 1;}
-
-    }
-
-
-    fclose(f);
-    return 0;
-}
 
 int isflightnumberthere(int number){ // checks if htat particular fight is there or not
     
@@ -399,9 +406,6 @@ void addbalance(user person,int value) {
 
 
 
-void useraccess(){
-        printf("Jai saidd ram");
-};
 
 void adminaccess(void) {
     FILE *fp;
@@ -442,6 +446,40 @@ void adminaccess(void) {
                 fp=deleteRecord(fp, flight_to_delete);
                 break;
             case 5:
+                return;
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+}
+
+void useraccess(void) {
+    FILE *fl;
+    fl = fopen("Flights.txt", "ab+");
+    if (!fl) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    int user_choice;
+    printf("Please register if you didn't:\n");
+    while (1) {
+        printf("\n User Menu:\n");
+        printf("1. Display Flights\n");
+        printf("2. New Register\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &user_choice);
+        
+        switch (user_choice) {
+            case 1:
+                displayflights(fl);
+                break;
+            case 2:
+                registration();
+                break;
+            case 3:
+                fclose(fl); // Close the file before returning
                 return;
             default:
                 printf("Invalid choice\n");

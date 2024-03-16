@@ -1,53 +1,32 @@
-FILE* modifyfligth(FILE* fp, int number) {
-    FILE* f1;
-    f1 = fopen("temp.txt", "w");
-    if (f1 == NULL) {
-        printf("Error in opening temporary file\n");
-        return NULL;
+void registration() {
+    user new;
+   
+    FILE *f = fopen("usernames.txt", "ab"); // Open file in append binary mode
+    
+    if (!f) {
+        printf("Error opening file for registration.\n");
+        return;
     }
 
-    Flight flightrecord;
-    rewind(fp);
+    user new;
+    printf("Enter your name: ");
+    scanf("%s",new.name);
 
-    while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
-        if (flightrecord.Number != number) {
-            fwrite(&flightrecord, sizeof(Flight), 1, f1);
-        }
-        else{
-            printf("Enter the schedule of the flight:\n");    
-            
-            printf("Enter the new hours:");
-            scanf("%d",&flightrecord.S.hours);
+    
 
-            printf("Enter the new Minutes:");
-            scanf("%d",&flightrecord.S.min);
+    do {
+        printf("Enter your Aadhar number: ");
+        scanf("%d", &new.unique_number);
+        getchar(); // Consume newline character left in input buffer
+    } while (isalreadyregistered(new.unique_number));
 
-            printf("Enter the new day:");
-            scanf("%d",&flightrecord.S.day);
+    printf("Enter your new password: ");
+    scanf("%d", &new.password);
 
-            printf("Enter the new month:");
-            scanf("%d",&flightrecord.S.month);
+    printf("Enter your balance: ");
+    scanf("%d", &new.balance);
 
-            printf("Enter the new year:");
-            scanf("%d",&flightrecord.S.year);
+    fwrite(&new, sizeof(user), 1, f);
 
-            fwrite(&flightrecord, sizeof(Flight), 1, f1);
-        }
-    }
-
-    fclose(fp);  // Close the original file pointer
-
-    fclose(f1);
-
-    remove("Flights.txt");
-
-    rename("temp.txt", "Flights.txt");
-
-    FILE* modifiedFile = fopen("Flights.txt", "a+b");
-    if (modifiedFile == NULL) {
-        printf("Error in opening modified file\n");
-        return NULL;
-    }
-
-    return modifiedFile;
-}
+    getchar();
+    fclose(f);

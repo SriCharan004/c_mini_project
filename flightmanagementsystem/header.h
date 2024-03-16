@@ -20,7 +20,7 @@ typedef struct {
 
 }Flight;
 
-
+void inccapacity(int number, int total);
 void insertflight(FILE* fp);
 void displayflights(FILE* fp);
 
@@ -43,6 +43,8 @@ typedef struct{
 
 }userbooked;
 
+void displayBooked();
+void displayUsernames();
 
 FILE* deleteRecord(FILE* fp, int number);
 void addbalance(user person,int value);

@@ -177,6 +177,27 @@ int isalreadyregistered(int number) {
     return 0; // User with the given unique number is not registered
 }
 
+// Function to display user information
+void displayUsernames() {
+    FILE *file = fopen("usernames.txt", "rb"); // Open file in binary read mode
+    if (!file) {
+        printf("Error opening file for display.\n");
+        return;
+    }
+
+    user currentUser;
+    printf("User Information:\n");
+    printf("%-20s %-15s %-10s %-10s\n", "Name", "Aadhar Number", "Password", "Balance");
+    printf("--------------------------------------------\n");
+
+    while (fread(&currentUser, sizeof(user), 1, file) == 1) {
+        printf("%-20s %-15d %-10d %-10d\n", currentUser.name, currentUser.unique_number, currentUser.password, currentUser.balance);
+    }
+
+    fclose(file);
+}
+
+
 void registration(void) {
     FILE *f = fopen("usernames.txt", "ab"); // Open file in append binary mode
     if (!f) {
@@ -189,11 +210,11 @@ void registration(void) {
     scanf("%s",new.name);
 
     
-    getchar();
+    
     do {
         printf("Enter your Aadhar number: ");
         scanf("%d", &new.unique_number);
-         // Consume newline character left in input buffer
+        getchar(); // Consume newline character left in input buffer
     } while (isalreadyregistered(new.unique_number));
     getchar();
     printf("Enter your new password: ");
@@ -219,7 +240,7 @@ int isflightnumberthere(int number){ // checks if htat particular fight is there
 
     int found=0;
     Flight new;
-    while(fread(&new,sizeof(user),1,f)==1){
+    while(fread(&new,sizeof(Flight),1,f)==1){
         
         if(new.Number==number){return 1;}
 
@@ -232,109 +253,128 @@ int isflightnumberthere(int number){ // checks if htat particular fight is there
 
 
 void reducecapacity(int number) {
+    FILE *fp = fopen("Flights.txt", "r+");
+    if (!fp) {
+        printf("Error opening file.\n");
+        return;
+    }
+
     Flight flightrecord;
-    FILE *fp;
-    fp=fopen("Flights.txt","r+");
-    while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
+    int found = 0;
+    while (fread(&flightrecord, sizeof(Flight), 1, fp) == 1) {
         if (flightrecord.Number == number) {
-            
-            
-            flightrecord.capacity=flightrecord.capacity-1;            
-            
+            flightrecord.capacity -= 1;
 
             fseek(fp, -sizeof(Flight), SEEK_CUR);
             fwrite(&flightrecord, sizeof(Flight), 1, fp);
-            
+            found = 1;
             break;
         }
     }
-    fclose(fp);
- }
 
-
-
-void booktickets(user person){
-
-    FILE *f;
-    f=fopen("Flights.txt","r");
-    if(!f){return;}
-    int num;
-    displayflights(f);
-    
-    FILE *booked;
-    booked=fopen("Booked.txt","a+b");//
-    FILE *F2=fopen("Flights.txt","r");
-
-    Flight flight;
-    int totalnum;
-    printf("Enter the flight number:");
-    
-    
-    scanf("%d",&num);
-    
-    userbooked newone;
-    
-
-    if(!isflightnumberthere(num)){printf("Fligt Doesn't exist");}
-
-    else{
-
-        while(fread(&flight,sizeof(Flight),1,F2)==1){
-            if(flight.Number==num){break;}
-        }
-
-        printf("How many tickets do you want?");
-        scanf("%d",&totalnum);
-
-        if(person.balance<flight.fare*totalnum){
-            printf("Sorry you cannot buy the fligth tickets due to isufficient balance:");
-            return;
-        }
-        
-        int i=0;
-
-        while(i<totalnum){
-            
-            strcpy(newone.USERname, person.name);
-            printf("Enter the passenger name");
-            fgets(newone.passengername,100,stdin);
-            printf("Enter the passenger age");
-            scanf("%d",&newone.age);  
-
-            reducecapacity(num);//reduces the flight capacity by 1
-
-            fwrite(&newone,sizeof(userbooked),1,booked);
-
-            
-
-        }
-
-
+    if (!found) {
+        printf("Flight with number %d not found.\n", number);
     }
 
-    fclose(f);
+    fclose(fp);
 }
 
 
-void inccapacity(int number,int total) { // number is fligth number, total means total number of tickets
-    Flight flightrecord;
+
+
+void booktickets(user person) {
+    FILE *f;
+    f = fopen("Flights.txt", "r");
+    if (!f) {
+        printf("Error opening Flights.txt\n");
+        return;
+    }
+
+    int num;
+
+    displayflights(f);
+
+    printf("Enter the flight number to book: ");
+    scanf("%d", &num);
+
+    if (!isflightnumberthere(num)) {
+        printf("Flight doesn't exist\n");
+        fclose(f);
+        return;
+    }
+
+    FILE *booked;
+    booked = fopen("Booked.txt", "a+b");
+    if (!booked) {
+        printf("Error opening Booked.txt\n");
+        fclose(f);
+        return;
+    }
+
+    Flight flight;
+    FILE *F2 = fopen("Flights.txt", "r");
+    while (fread(&flight, sizeof(Flight), 1, F2) == 1) {
+        if (flight.Number == num) {
+            break;
+        }
+    }
+    fclose(F2);
+
+    int totalnum;
+    printf("How many tickets do you want? ");
+    scanf("%d", &totalnum);
+
+    if (person.balance < flight.fare * totalnum) {
+        printf("Sorry, you cannot buy the flight tickets due to insufficient balance.\n");
+        fclose(f);
+        fclose(booked);
+        return;
+    }
+
+    userbooked newone;
+    getchar(); // Consume newline character left in input buffer
+
+    for (int i = 0; i < totalnum; i++) {
+        strcpy(newone.USERname, person.name);
+
+        printf("Enter the passenger name: ");
+        fgets(newone.passengername, sizeof(newone.passengername), stdin);
+        strtok(newone.passengername, "\n"); // Remove newline character from the name
+
+        printf("Enter the passenger age: ");
+        scanf("%d", &newone.age);
+
+        reducecapacity(num); // Reduces the flight capacity by 1
+
+        fwrite(&newone, sizeof(userbooked), 1, booked);
+        getchar(); // Consume newline character left in input buffer
+    }
+
+    fclose(f);
+    fclose(booked);
+}
+
+
+void inccapacity(int number, int total) {
     FILE *fp;
-    fp=fopen("Flights.txt","r+");
-    while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
+    fp = fopen("Flights.txt", "r+");
+    if (!fp) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    Flight flightrecord;
+    while (fread(&flightrecord, sizeof(Flight), 1, fp) == 1) {
         if (flightrecord.Number == number) {
-            
-            
-            flightrecord.capacity=flightrecord.capacity+total;            
-            
+            flightrecord.capacity += total;
 
             fseek(fp, -sizeof(Flight), SEEK_CUR);
             fwrite(&flightrecord, sizeof(Flight), 1, fp);
-            
             break;
         }
     }
     fclose(fp);
- }
+}
 
 
 
@@ -430,7 +470,9 @@ void adminaccess(void) {
         printf("2. Display Flights\n");
         printf("3. Modify Schedule\n");
         printf("4. Delete Flight\n");
-        printf("5. Back to Access Menu\n");
+        printf("5. Display users.txt\n");
+        printf("6. Display booked passengers\n");
+        printf("7. Back to Access Menu\n");
         printf("Enter your choice: ");
         scanf("%d", &admin_choice);
         
@@ -454,7 +496,15 @@ void adminaccess(void) {
                 scanf("%d", &flight_to_delete);
                 fp=deleteRecord(fp, flight_to_delete);
                 break;
+                
             case 5:
+                printf("Printing the User details.\n");
+                displayUsernames();
+                break;
+            case 6:
+                printf("Printing the booked details.\n");
+                displayBooked();
+            case 7:
                 return;
             default:
                 printf("Invalid choice\n");
@@ -540,4 +590,23 @@ user getUserByNumber(int number) {
     // If no user with the given unique number is found, return a user with all fields set to zero
     user emptyUser = { "", 0, 0, 0 };
     return emptyUser;
+}
+
+void displayBooked() {
+    FILE *bookedFile = fopen("Booked.txt", "rb");
+    if (!bookedFile) {
+        printf("Error opening Booked.txt file.\n");
+        return;
+    }
+
+    printf("Booked Tickets:\n");
+    printf("%-20s %-20s %-10s\n", "Username", "Passenger Name", "Age");
+    printf("---------------------------------------------\n");
+
+    userbooked ticket;
+    while (fread(&ticket, sizeof(userbooked), 1, bookedFile)) {
+        printf("%-20s %-20s %-10d\n", ticket.USERname, ticket.passengername, ticket.age);
+    }
+
+    fclose(bookedFile);
 }

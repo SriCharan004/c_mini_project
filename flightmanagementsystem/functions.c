@@ -64,56 +64,98 @@ void displayflights(FILE* fp) {
     }
 }
 
-void modifyschedule(FILE* fp, int number) {
+
+FILE* modifyfligth(FILE* fp, int number) {
+    FILE* f1;
+    f1 = fopen("temp.txt", "w");
+    if (f1 == NULL) {
+        printf("Error in opening temporary file\n");
+        return NULL;
+    }
+
     Flight flightrecord;
-    int found = 0;
     rewind(fp);
+
     while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
-        if (flightrecord.Number == number) {
+        if (flightrecord.Number != number) {
+            fwrite(&flightrecord, sizeof(Flight), 1, f1);
+        }
+        else{
             printf("Enter the schedule of the flight:\n");    
             
-            printf("Enter the hours:");
+            printf("Enter the new hours:");
             scanf("%d",&flightrecord.S.hours);
 
-            printf("Enter the Minutes:");
+            printf("Enter the new Minutes:");
             scanf("%d",&flightrecord.S.min);
 
-            printf("Enter the day:");
+            printf("Enter the new day:");
             scanf("%d",&flightrecord.S.day);
 
-            printf("Enter the month:");
+            printf("Enter the new month:");
             scanf("%d",&flightrecord.S.month);
 
-            printf("Enter the year:");
+            printf("Enter the new year:");
             scanf("%d",&flightrecord.S.year);
 
-
-            fseek(fp, -sizeof(Flight), SEEK_CUR);
-            fwrite(&flightrecord, sizeof(Flight), 1, fp);
-            found = 1;
-            break;
+            fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
     }
-    if (!found) {
-        printf("Record with Flight number %d not found\n", number);
+
+    fclose(fp);  // Close the original file pointer
+
+    fclose(f1);
+
+    remove("Flights.txt");
+
+    rename("temp.txt", "Flights.txt");
+
+    FILE* modifiedFile = fopen("Flights.txt", "a+b");
+    if (modifiedFile == NULL) {
+        printf("Error in opening modified file\n");
+        return NULL;
     }
+
+    return modifiedFile;
 }
 
-void deleteRecord(FILE* fp, int number) {
+
+
+FILE* deleteRecord(FILE* fp, int number) {
+
+    FILE* f1;
+    f1 = fopen("temp.txt", "w");
+    if (f1 == NULL) {
+        printf("Error in opening temporary file\n");
+        return NULL;
+    }
+
     Flight record;
-    FILE* tmpFile = tmpfile();
     rewind(fp);
+
     while (fread(&record, sizeof(Flight), 1, fp)) {
         if (record.Number != number) {
-            fwrite(&record, sizeof(Flight), 1, tmpFile);
+            fwrite(&record, sizeof(Flight), 1, f1);
         }
     }
+
     fclose(fp);
-    remove("Flights.txt");
-    rename("tmpFile", "Flights.txt");
-    fp = fopen("Flights.txt", "rb+");
-    fclose(tmpFile);
+    fclose(f1);
+
+    remove("Fligths.txt");
+    
+    rename("temp.txt", "Fligths.txt");
+
+    FILE* modifiedFile = fopen("Fligths.txt", "a+b");
+    if (modifiedFile == NULL) {
+        printf("Error in opening modified file\n");
+        return NULL;
+    }
+
+    return modifiedFile;
 }
+
+
 
 void registration(void ){
     FILE *f;
@@ -361,7 +403,11 @@ void useraccess(){
         printf("Jai saidd ram");
 };
 
-void adminaccess(FILE* fp) {
+void adminaccess(void) {
+    FILE *fp;
+    fp=fopen("Flights.txt","a+b");
+    if(!fp){return;}
+
     int admin_choice;
     int flight_number;
     int flight_to_delete;
@@ -383,17 +429,17 @@ void adminaccess(FILE* fp) {
                 displayflights(fp);
                 break;
             case 3:
-                fclose(fp);
-                fp=fopen("Fligths.txt","r+");
+                
+                
                 printf("Enter the flight number to modify schedule: ");
                 scanf("%d", &flight_number);
-                modifyschedule(fp, flight_number);
+                fp=modifyfligth(fp, flight_number);
                 break;
             case 4:
                 
                 printf("Enter the flight number to delete: ");
                 scanf("%d", &flight_to_delete);
-                deleteRecord(fp, flight_to_delete);
+                fp=deleteRecord(fp, flight_to_delete);
                 break;
             case 5:
                 return;

@@ -2,12 +2,7 @@
 #include <stdio.h>
 
 int main() {
-    FILE* fp;
-    fp = fopen("Flights.txt", "ab+");
-    if (fp == NULL) {
-        printf("Error opening file\n");
-        return 1;
-    }
+    
     int choice;
     
     while (1) {
@@ -20,13 +15,13 @@ int main() {
         
         switch (choice) {
             case 1:
-                adminaccess(fp);
+                adminaccess();
                 break;
             case 2:
                 useraccess();
                 break;
             case 3:
-                fclose(fp);
+                
                 return 0;
             default:
                 printf("Invalid choice\n");

@@ -1,0 +1,53 @@
+FILE* modifyfligth(FILE* fp, int number) {
+    FILE* f1;
+    f1 = fopen("temp.txt", "w");
+    if (f1 == NULL) {
+        printf("Error in opening temporary file\n");
+        return NULL;
+    }
+
+    Flight flightrecord;
+    rewind(fp);
+
+    while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
+        if (flightrecord.Number != number) {
+            fwrite(&flightrecord, sizeof(Flight), 1, f1);
+        }
+        else{
+            printf("Enter the schedule of the flight:\n");    
+            
+            printf("Enter the new hours:");
+            scanf("%d",&flightrecord.S.hours);
+
+            printf("Enter the new Minutes:");
+            scanf("%d",&flightrecord.S.min);
+
+            printf("Enter the new day:");
+            scanf("%d",&flightrecord.S.day);
+
+            printf("Enter the new month:");
+            scanf("%d",&flightrecord.S.month);
+
+            printf("Enter the new year:");
+            scanf("%d",&flightrecord.S.year);
+
+            fwrite(&flightrecord, sizeof(Flight), 1, f1);
+        }
+    }
+
+    fclose(fp);  // Close the original file pointer
+
+    fclose(f1);
+
+    remove("Flights.txt");
+
+    rename("temp.txt", "Flights.txt");
+
+    FILE* modifiedFile = fopen("Flights.txt", "a+b");
+    if (modifiedFile == NULL) {
+        printf("Error in opening modified file\n");
+        return NULL;
+    }
+
+    return modifiedFile;
+}

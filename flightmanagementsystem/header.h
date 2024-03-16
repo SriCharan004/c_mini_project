@@ -24,7 +24,7 @@ typedef struct {
 void insertflight(FILE* fp);
 void displayflights(FILE* fp);
 
-void modifyschedule(FILE* fp, int number);
+FILE* modifyfligth(FILE* fp, int number);
 
 void registration(void);
 
@@ -44,7 +44,7 @@ typedef struct{
 }userbooked;
 
 
-void deleteRecord(FILE* fp, int number);
+FILE* deleteRecord(FILE* fp, int number);
 void addbalance(user person,int value);
 void canceltickets(user person,int flightnum,int total);
 

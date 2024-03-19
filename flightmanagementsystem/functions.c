@@ -210,13 +210,14 @@ void registration(void) {
     scanf("%s",new.name);
 
     
-    
+    getchar();
     do {
         printf("Enter your Aadhar number: ");
         scanf("%d", &new.unique_number);
-        getchar(); // Consume newline character left in input buffer
+         // Consume newline character left in input buffer
     } while (isalreadyregistered(new.unique_number));
-    getchar();
+    
+
     printf("Enter your new password: ");
     scanf("%d", &new.password);
 
@@ -225,7 +226,7 @@ void registration(void) {
 
     fwrite(&new, sizeof(user), 1, f);
 
-    getchar();
+    
     fclose(f);
 
 }
@@ -420,7 +421,7 @@ void canceltickets(user person, int flightnum, int total) {
     inccapacity(flightnum, total);
 
     // Add balance
-    // Assuming you have a function named 'addbalance'
+
     addbalance(person, value);
 
     // Close and remove temporary file
@@ -453,6 +454,35 @@ void addbalance(user person,int value) {
     fclose(fp);
  }
 
+
+void mystatus(user person, int flightnum){
+    FILE *u = fopen("Flights.txt", "r+b");
+    if (!u) {
+        printf("Error opening files.\n");
+        return;
+    }
+
+
+
+    Flight flight;
+    int found = 0;
+
+    while (fread(&flight, sizeof(Flight), 1, u) == 1) {
+        if (flight.Number == flightnum) {
+            printf("Plane is sceduled:\n");
+            printf("Flight %d Scheduled at %d:%d on %d of %d month of year %d:\n", flight.Number,flight.S.min, flight.S.hours, flight.S.day
+            ,flight.S.month, flight.S.year);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        printf("Flight %d is either canceled or not scheduled.\n", flightnum);
+    }
+
+    fclose(u);
+}
 
 
 
@@ -521,8 +551,11 @@ void useraccess(void) {
     }
     int uni;
     user person;
+    int value; // value of money
     int user_choice;
     int flightnum,total;
+    int pass;
+    int flight_number;
     printf("Please register if you didn't:\n");
     while (1) {
         printf("\n User Menu:\n");
@@ -532,7 +565,9 @@ void useraccess(void) {
         printf("4. Cancel Tickets\n");
         printf("5. Add Balance\n");
 
-        printf("6. Exit\n");
+        
+        printf("6. Print Status of flights\n");
+        printf("7. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &user_choice);
         
@@ -554,14 +589,54 @@ void useraccess(void) {
                 booktickets(person);
                 break;
             case 4:
-                canceltickets(person,flightnum,total);
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+                if(!isalreadyregistered(uni)){
+                    printf("Number not found please register:");
+                    break;}
+                person=getUserByNumber(uni);
+
+
+                printf("Enter your password:");
+                scanf("%d",&pass);
+                if(pass==person.password){
+                    canceltickets(person,flightnum,total);
+                    printf("cancelled succesfully");
+                }
+                else{printf("Wrong password");}
+
                 
                 break;
             case 5:
-                //canceltickets();
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+
+                person=getUserByNumber(uni);
+                printf("Enter How much do you want to add?");
+                scanf("%d",&value);
+                printf("Enter your password:");
+                scanf("%d",&pass);
+                if(pass==person.password){
+                    addbalance(person,value);
+                    printf("Added succesfully");
+                }
+                else{printf("Wrong password");}
+
                 break;
-            
+
             case 6:
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+
+                person=getUserByNumber(uni);
+                
+                printf("Enter the flight number");
+                
+                scanf("%d",&flight_number);
+
+                mystatus(person,flight_number);   
+                break;         
+            case 7:
                 fclose(fl); // Close the file before returning
                 return;
             default:
@@ -610,3 +685,5 @@ void displayBooked() {
 
     fclose(bookedFile);
 }
+
+

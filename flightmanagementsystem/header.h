@@ -27,13 +27,16 @@ void displayflights(FILE* fp);
 FILE* modifyfligth(FILE* fp, int number);
 
 void registration(void);
-
 typedef struct{
     char name[50];
     int unique_number;
     int password;
     int balance; 
 }user;
+
+
+
+void mystatus(user person, int flightnum);
 
 typedef struct{
     char USERname[50];

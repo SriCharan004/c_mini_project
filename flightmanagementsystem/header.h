@@ -51,8 +51,7 @@ void displayUsernames();
 
 FILE* deleteRecord(FILE* fp, int number);
 void addbalance(user person,int value);
-void canceltickets(user person,int flightnum,int total);
-
+void canceltickets(user person, int flightnum);
 int isalreadyregistered(int number);
 int isflightnumberthere(int number);
 void booktickets(user person);
@@ -61,3 +60,6 @@ void booktickets(user person);
 void adminaccess();
 user getUserByNumber(int number);
 void useraccess(void);
+
+int countOccurrences(const char *name);
+void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity);

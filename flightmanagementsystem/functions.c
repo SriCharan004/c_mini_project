@@ -399,7 +399,7 @@ void inccapacity(int number) {
 
 
 
-void canceltickets(user person, int flightnum, int total) {
+void canceltickets(user person, int flightnum) {
     // Variables
     FILE *b, *u, *f1;
     int value = 0, found = 0;
@@ -433,7 +433,7 @@ void canceltickets(user person, int flightnum, int total) {
         if (new_flight.Number != flightnum) {
             fwrite(&new_flight, sizeof(Flight), 1, f1);
         } else {
-            inccapacity(flightnum);        
+                    
             fwrite(&new_flight, sizeof(Flight), 1, f1);
             found = 1;
             value = new_flight.fare * 90 / 100;
@@ -505,6 +505,67 @@ void mystatus(user person, int flightnum){
     fclose(u);
 }
 
+int countOccurrences(const char *name) {
+    FILE *file = fopen("Booked.txt", "rb");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return -1; // Error opening file
+    }
+
+    userbooked record;
+    int count = 0;
+    while (fread(&record, sizeof(userbooked), 1, file) == 1) {
+        if (strcmp(record.USERname, name) == 0) {
+            count++;
+        }
+    }
+
+    fclose(file);
+    return count;
+}
+
+void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity) {
+    // Open the file for reading and writing
+    FILE *file = fopen("Flights.txt", "r+b");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    // Read each flight record from the file, find the flight by flight number,
+    // update its capacity, and write it back
+    Flight flight;
+    int found = 0;
+    while (fread(&flight, sizeof(Flight), 1, file) == 1) {
+        if (flight.Number == flightNumber) {
+            // Update the capacity by adding the additional capacity
+            flight.capacity += additionalCapacity;
+
+            // Ensure that the capacity does not exceed the maximum capacity
+            if (flight.capacity > flight.maxcapacity) {
+                flight.capacity = flight.maxcapacity;
+                printf("Warning: Capacity of flight %d exceeded the maximum capacity.\n", flight.Number);
+            }
+
+            // Move the file pointer back to the beginning of the current record
+            fseek(file, -sizeof(Flight), SEEK_CUR);
+
+            // Write the updated flight record back to the file
+            fwrite(&flight, sizeof(Flight), 1, file);
+
+            found = 1;
+            break;
+        }
+    }
+
+    // Close the file
+    fclose(file);
+
+    if (!found) {
+        printf("Flight with number %d not found.\n", flightNumber);
+    }
+}
+
 
 
 void adminaccess(void) {
@@ -572,6 +633,7 @@ void useraccess(void) {
     }
     int uni;
     user person;
+    int freq;
     int value; // value of money
     int user_choice;
     int flightnum,total;
@@ -617,12 +679,15 @@ void useraccess(void) {
                     break;}
                 person=getUserByNumber(uni);
 
+                freq=countOccurrences(person.name);
 
                 printf("Enter your password:");
                 scanf("%d",&pass);
                 if(pass==person.password){
                     
-                    canceltickets(person,flightnum,total);
+                    canceltickets(person,flightnum);
+                    
+                    modifyCapacityByFlightNumber(flightnum,countOccurrences(person.name));
                     
                     printf("cancelled succesfully");
                 }

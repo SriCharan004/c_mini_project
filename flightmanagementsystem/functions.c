@@ -210,11 +210,11 @@ void registration(void) {
     scanf("%s",new.name);
 
     
-    getchar();
+    
     do {
         printf("Enter your Aadhar number: ");
         scanf("%d", &new.unique_number);
-         // Consume newline character left in input buffer
+        getchar(); // Consume newline character left in input buffer
     } while (isalreadyregistered(new.unique_number));
     
 
@@ -293,7 +293,7 @@ void booktickets(user person) {
 
     int num;
 
-    displayflights(f);
+    
 
     printf("Enter the flight number to book: ");
     scanf("%d", &num);
@@ -356,24 +356,35 @@ void booktickets(user person) {
 }
 
 
-void inccapacity(int number, int total) {
-    FILE *fp;
-    fp = fopen("Flights.txt", "r+");
+void inccapacity(int number) {
+    FILE *fp = fopen("Flights.txt", "r+b");  // Open in read-write mode
     if (!fp) {
         printf("Error opening file.\n");
         return;
     }
 
     Flight flightrecord;
+    int found = 0;
     while (fread(&flightrecord, sizeof(Flight), 1, fp) == 1) {
         if (flightrecord.Number == number) {
-            flightrecord.capacity += total;
+            // Increment capacity
+            flightrecord.capacity += 1;
 
+            // Move the file pointer back to the beginning of the current record
             fseek(fp, -sizeof(Flight), SEEK_CUR);
+
+            // Write the updated record back to the file
             fwrite(&flightrecord, sizeof(Flight), 1, fp);
+
+            found = 1;
             break;
         }
     }
+
+    if (!found) {
+        printf("Flight with number %d not found.\n", number);
+    }
+
     fclose(fp);
 }
 
@@ -381,57 +392,67 @@ void inccapacity(int number, int total) {
 
 
 
+
+
 // Function to cancel tickets
+
+
+
+
 void canceltickets(user person, int flightnum, int total) {
     // Variables
-    int value;
-
+    FILE *b, *u, *f1;
+    int value = 0, found = 0;
+    
     // Open files
-    FILE *b = fopen("Booked.txt", "r+b");
-    FILE *u = fopen("Flights.txt", "r+b");
-    FILE *tmpFile = tmpfile();
+    b = fopen("Booked.txt", "r+b");
+    u = fopen("Flights.txt", "r+b");
+    f1 = fopen("temp.txt", "w");
 
-    if (!b || !u || !tmpFile) {
+    if (!b || !u || !f1) {
         printf("Error opening files.\n");
         return;
     }
 
-    // Delete user's booking from Booked.txt
+    // Update booked passengers list
     userbooked subjecttocancel;
     while (fread(&subjecttocancel, sizeof(userbooked), 1, b) == 1) {
         if (strcmp(subjecttocancel.USERname, person.name) != 0) {
-            fwrite(&subjecttocancel, sizeof(userbooked), 1, tmpFile);
+            fwrite(&subjecttocancel, sizeof(userbooked), 1, f1);
         }
     }
+    fclose(b);
+    fclose(f1);
+    remove("Booked.txt");
+    rename("temp.txt", "Booked.txt");
 
-    // Update flight fare
-    Flight usrecancel;
-    while (fread(&usrecancel, sizeof(Flight), 1, u) == 1) {
-        if (usrecancel.Number == flightnum) {
-            value = usrecancel.fare * 90 / 100;
-            usrecancel.fare = value;
-            fseek(u, -sizeof(Flight), SEEK_CUR);
-            fwrite(&usrecancel, sizeof(Flight), 1, u);
-            break;
+    // Update flight capacity and fare
+    f1 = fopen("temp.txt", "w");
+    Flight new_flight;
+    while (fread(&new_flight, sizeof(Flight), 1, u) == 1) {
+        if (new_flight.Number != flightnum) {
+            fwrite(&new_flight, sizeof(Flight), 1, f1);
+        } else {
+            inccapacity(flightnum);        
+            fwrite(&new_flight, sizeof(Flight), 1, f1);
+            found = 1;
+            value = new_flight.fare * 90 / 100;
         }
     }
-
-    // Increase capacity
-    // Assuming you have a function named 'inccapacity'
-    inccapacity(flightnum, total);
+    fclose(u);
+    fclose(f1);
+    remove("Flights.txt");
+    rename("temp.txt", "Flights.txt");
 
     // Add balance
+    if (found) {
+        addbalance(person, value);
+        printf("Balance added.\n");
+    }
 
-    addbalance(person, value);
-
-    // Close and remove temporary file
-    fclose(b);
-    fclose(u);
-    fclose(tmpFile);
-
-    remove("Booked.txt");
-    rename("tmpFile", "Booked.txt");
 }
+
+
 
 
 void addbalance(user person,int value) { 
@@ -600,7 +621,9 @@ void useraccess(void) {
                 printf("Enter your password:");
                 scanf("%d",&pass);
                 if(pass==person.password){
+                    
                     canceltickets(person,flightnum,total);
+                    
                     printf("cancelled succesfully");
                 }
                 else{printf("Wrong password");}

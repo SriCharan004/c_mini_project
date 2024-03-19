@@ -1,48 +1,28 @@
-void mystatus(user person, int flightnum){
-    FILE *u = fopen("Flights.txt", "r+b");
-    if (!u) {
-        printf("Error opening files.\n");
+void inccapacity(int number) {
+    FILE *fp = fopen("Flights.txt", "r+");
+    if (!fp) {
+        printf("Error opening file.\n");
         return;
     }
 
+    Flight flightrecord;
+    int found = 0;
+    while (fread(&flightrecord, sizeof(Flight), 1, fp) == 1) {
+        if (flightrecord.Number == number) {
+            flightrecord.capacity += 1;
 
-
-    Flight flight;
-    bool found = false;
-
-    while (fread(&flight, sizeof(Flight), 1, u) == 1) {
-        if (flight.Number == flightnum) {
-            printf("Plane is sceduled:\n");
-            fprintf("Flight %d Scheduled at %d:%d on %d of %d month of year %d:\n", flight.Number,flight.S.min, flight.S.hours, flight.S.day
-            ,flight.S.month, flight.S.year);
-            found = true;
+            fseek(fp, -sizeof(Flight), SEEK_CUR);
+            fwrite(&flightrecord, sizeof(Flight), 1, fp);
+            found = 1;
             break;
         }
     }
 
     if (!found) {
-        fprintf(statusFile, "Flight %d is either canceled or not scheduled.\n", flightnum);
+        printf("Flight with number %d not found.\n", number);
     }
 
-    fclose(statusFile);
+    fclose(fp);
 }
 
-typedef struct{
-    
-    int hours;
-    int min;
-    int day;
-    int month;
-    int year;
 
-}schedule;
-
-typedef struct {
-    int Number;
-    int maxcapacity;
-    int capacity;
-    int fare;
-
-    schedule S;
-
-}Flight;

@@ -20,7 +20,7 @@ typedef struct {
 
 }Flight;
 
-void inccapacity(int number, int total);
+void inccapacity(int number);
 void insertflight(FILE* fp);
 void displayflights(FILE* fp);
 

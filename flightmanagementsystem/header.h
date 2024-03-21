@@ -42,7 +42,7 @@ typedef struct{
     char USERname[50];
     int age;
     char passengername[50];
-
+    int flightnum;
 
 }userbooked;
 
@@ -63,3 +63,12 @@ void useraccess(void);
 
 int countOccurrences(const char *name);
 void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity);
+void increasecapacity(int number,int total);
+
+
+void deductbalance(user person,int value);
+
+void addcapacity(int total,int flightnumber);
+
+
+void deleteRecords(const char *userName, int flightNum);

@@ -1,28 +1,20 @@
-void inccapacity(int number) {
-    FILE *fp = fopen("Flights.txt", "r+");
-    if (!fp) {
-        printf("Error opening file.\n");
-        return;
-    }
+void addcapacity(int total,int flightnumber) { 
+    Flight flight;
 
-    Flight flightrecord;
-    int found = 0;
-    while (fread(&flightrecord, sizeof(Flight), 1, fp) == 1) {
-        if (flightrecord.Number == number) {
-            flightrecord.capacity += 1;
+    FILE *fp;
+    fp=fopen("Flights.txt","r+");
+    while (fread(&flight, sizeof(user), 1, fp)) {
+        if (flight.Number == flightnumber) {
+            
+            
+            flight.capacity=flight.capacity+total;            
+            
 
             fseek(fp, -sizeof(Flight), SEEK_CUR);
-            fwrite(&flightrecord, sizeof(Flight), 1, fp);
-            found = 1;
+            fwrite(&flight, sizeof(Flight), 1, fp);
+            
             break;
         }
     }
-
-    if (!found) {
-        printf("Flight with number %d not found.\n", number);
-    }
-
     fclose(fp);
-}
-
-
+ }

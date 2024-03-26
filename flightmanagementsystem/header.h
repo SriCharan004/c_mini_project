@@ -18,13 +18,16 @@ typedef struct {
 
     schedule S;
 
+    char from[100];
+    char destination[100];
+
 }Flight;
 
 void inccapacity(int number);
 void insertflight(FILE* fp);
 void displayflights(FILE* fp);
 
-FILE* modifyfligth(FILE* fp, int number);
+FILE* modifyflight(FILE* fp, int number);
 
 void registration(void);
 typedef struct{
@@ -40,6 +43,7 @@ void mystatus(user person, int flightnum);
 
 typedef struct{
     char USERname[50];
+    int unique_number;
     int age;
     char passengername[50];
     int flightnum;
@@ -50,18 +54,19 @@ void displayBooked();
 void displayUsernames();
 
 FILE* deleteRecord(FILE* fp, int number);
-void addbalance(user person,int value);
 void canceltickets(user person, int flightnum);
 int isalreadyregistered(int number);
 int isflightnumberthere(int number);
 void booktickets(user person);
-
+user getUserByName(char Name[]);
 
 void adminaccess();
 user getUserByNumber(int number);
+void addbalance(user person,int value);
+
 void useraccess(void);
 
-int countOccurrences(const char *name);
+int countOccurrences(const char *name,int flightNum);
 void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity);
 void increasecapacity(int number,int total);
 
@@ -72,3 +77,5 @@ void addcapacity(int total,int flightnumber);
 
 
 void deleteRecords(const char *userName, int flightNum);
+
+void addrefund(int flightNum); // if the flight is cancelled add the refund to the users

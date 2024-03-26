@@ -1,8 +1,12 @@
 #include "header.h"
 #include <stdio.h>
+#include <string.h>
+
+#define ADMIN_PASSWORD "admin123"
 
 int main() {
     
+    char password[20];
     int choice;
     
     while (1) {
@@ -15,7 +19,17 @@ int main() {
         
         switch (choice) {
             case 1:
-                adminaccess();
+                printf("Enter the admin password: ");
+                scanf("%s", password);
+
+                if (strcmp(password, ADMIN_PASSWORD) == 0) {
+                    printf("Admin access granted!\n");
+                    adminaccess();
+                } else {
+                printf("Incorrect password. Access denied!\n");
+                }
+                
+                
                 break;
             case 2:
                 useraccess();

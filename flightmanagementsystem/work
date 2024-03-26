@@ -1,20 +1,43 @@
-void addcapacity(int total,int flightnumber) { 
+void addrefund(int flightNum){
+
+    FILE *booked;
+    booked=fopen("Booked.txt", "rb");
+    if (!bookedFile) {
+        printf("Error opening Booked.txt file.\n");
+        return;
+    }
+
+    userbooked record;
+    user person;
+    int price;
     Flight flight;
+    FILE *f;
+    f=fopen("flights.txt","rb");
+    if(!f){
+        return;
+    }
 
-    FILE *fp;
-    fp=fopen("Flights.txt","r+");
-    while (fread(&flight, sizeof(user), 1, fp)) {
-        if (flight.Number == flightnumber) {
-            
-            
-            flight.capacity=flight.capacity+total;            
-            
-
-            fseek(fp, -sizeof(Flight), SEEK_CUR);
-            fwrite(&flight, sizeof(Flight), 1, fp);
-            
+    while(fread(&flight,sizeof(Flight),1,f)==1){
+        
+        if(flight.flightnum==flightNum){
+            price=flight.fare;
             break;
         }
+
     }
-    fclose(fp);
- }
+    
+
+
+
+    while(fread(&record,sizeof(userbooked),1,booked)==1){
+        
+        if(record.flightnum==flightNum){
+               person = getUserByName(record.USERname);
+               addbalance(person,price+100);
+        }
+
+    }
+
+
+}
+

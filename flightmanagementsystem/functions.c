@@ -49,10 +49,10 @@ void insertflight(FILE* fp) {
         scanf("%d", &flightrecord.S.year);
     } while (flightrecord.S.year <= 2023);
 
-    printf("Enter the starting location:");
+    printf("Enter the starting location : ");
     scanf("%s",flightrecord.from);
 
-    printf("Enter the destination:");
+    printf("Enter the destination : ");
     scanf("%s",flightrecord.destination);
 
     fseek(fp, 0, SEEK_END);
@@ -86,34 +86,42 @@ FILE* modifyflight(FILE* fp, int number) {
         if (flightrecord.Number != number) {
             fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
-        else{
-            printf("Enter the schedule of the flight:\n");    
-            
-            printf("Enter the new hours:");
-            scanf("%d",&flightrecord.S.hours);
+        else {
+            printf("Enter the schedule of the flight:\n");
 
-            printf("Enter the new Minutes:");
-            scanf("%d",&flightrecord.S.min);
+            do {
+                printf("Enter the new hours:");
+                scanf("%d", &flightrecord.S.hours);
+            } while (!(flightrecord.S.hours >= 0 && flightrecord.S.hours <= 23));
 
-            printf("Enter the new day:");
-            scanf("%d",&flightrecord.S.day);
+            do {
+                printf("Enter the new Minutes:");
+                scanf("%d", &flightrecord.S.min);
+            } while (!(flightrecord.S.min >= 0 && flightrecord.S.min <= 59));
 
-            printf("Enter the new month:");
-            scanf("%d",&flightrecord.S.month);
+            do {
+                printf("Enter the new day:");
+                scanf("%d", &flightrecord.S.day);
+            } while (!(flightrecord.S.day >= 0 && flightrecord.S.day <= 31));
 
-            printf("Enter the new year:");
-            scanf("%d",&flightrecord.S.year);
+            do {
+                printf("Enter the new month:");
+                scanf("%d", &flightrecord.S.month);
+            } while (!(flightrecord.S.month >= 1 && flightrecord.S.month <= 12));
+
+            do {
+                printf("Enter the new year:");
+                scanf("%d", &flightrecord.S.year);
+            } while (!(flightrecord.S.year <= 2023));
 
             fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
     }
 
     fclose(fp);  // Close the original file pointer
-
     fclose(f1);
 
     remove("Flights.txt");
-
     rename("temp.txt", "Flights.txt");
 
     FILE* modifiedFile = fopen("Flights.txt", "a+b");
@@ -124,6 +132,7 @@ FILE* modifyflight(FILE* fp, int number) {
 
     return modifiedFile;
 }
+
 
 
 
@@ -597,7 +606,7 @@ void mystatus(user person, int flightnum){
     }
 
     if (!found) {
-        printf("Flight %d is either canceled or not scheduled, if canceled the refund is added\n", flightnum);
+        printf("Flight %d is either canceled or not scheduled, if canceled the refund is already added\n", flightnum);
     }
 
     fclose(u);
@@ -696,7 +705,6 @@ void adminaccess(void) {
                 break;
             case 3:
                 
-                
                 printf("Enter the flight number to modify schedule: ");
                 scanf("%d", &flight_number);
                 fp=modifyflight(fp, flight_number);
@@ -772,6 +780,13 @@ void useraccess(void) {
                     break;}
                 person=getUserByNumber(uni);
 
+                printf("Enter your password:(\nNote: No space is allowed\n)");
+                scanf("%d",&pass);
+
+                if(!(person.password==pass)){
+                    printf("Wrong Password\n");
+                    break;
+                }        
                 booktickets(person);
                 break;
             case 4:
@@ -798,7 +813,7 @@ void useraccess(void) {
                     printf("cancelled succesfully");
                 }
                 else{printf("Wrong password");}
-                addcapacity(freq,flightnum);
+
                 
                 break;
             case 5:

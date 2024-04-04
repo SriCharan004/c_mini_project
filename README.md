@@ -1,38 +1,71 @@
-c_mini_project
+# Flight Management System
 
-Flight Management System
+This project implements a simple Flight Booking System using C programming language. It allows users to register, book flights, check flight status, cancel tickets, and admin can manage flights and users.
 
-This project implements a simple Flight Management System using File Handling techniques in C programming language.
+## Access
 
-Access Levels
-The system supports two access levels:
+There are two accesses:
+- Password protected admin access
+- User access
 
-Admin Access: Password-protected access for administrators.
-User Access: Access for regular users.
+## Admin Access
 
+Admin has the key control and has the following abilities:
 
-Admin Access
-    
-    In the admin access mode, administrators have the following privileges:
+### Admin Abilities
 
-        Insert new flights into the system.
-        Display the flights.
-        Delete flight records.
-        Modify flight schedules.
-        Display the list of registered users.
-        View the list of passengers who have booked flights.
+- Insert flight records
+- Modify flight records
+- Delete flight records
+- Display flight records
+- View registered users
+- View users who have booked tickets and their details
 
-User Access
-    In the user access mode, users can perform the following actions:
+## User Access
 
-    Book available tickets for flights.
-    Cancel booked tickets.
-    Add balance to their accounts.
-    Check the status of their booked flights.
+User has the following abilities:
 
-Function Consistency
+### User Abilities
 
-Throughout the development of this script, special attention has been given to ensuring consistency in the implementation of functions. This includes:
+- See the upcoming flight journeys
+- Register before booking tickets
+- Book tickets
+- Cancel tickets
+- Add to their balance
+- Know the status of the flight they have booked
+- Check their balance
 
-    Handling of all possible loopholes and edge cases in each function.
-    Logical deduction of money in all relevant functions to maintain consistency
+## Utility Functions
+
+There are several utility functions written for consistency in logic and work. Their duties include:
+
+- Increase the flight's capacity
+- Check if a registration number is already registered
+- Verify the existence of a flight number
+- Retrieve a user by name
+- Retrieve a user by number
+- Add balance to a user's account
+- Check a user's balance
+- Count occurrences of a name with a flight number
+- Deduct balance from a user's account
+- Increase the capacity of a flight
+- Add a refund for cancelled flights
+- Delete booked users for a specified flight number
+
+## Structures
+
+#### Schedule Structure
+- Stores time and date information including hours, minutes, day, month, and year.
+
+#### Flight Structure
+- Represents a flight with attributes such as flight number, maximum capacity, current capacity, fare, schedule, origin, and destination.
+
+#### User Structure
+- Defines user details including name, unique number, password, and balance.
+
+#### Booked User Structure
+- Holds information about booked users including username, unique number, age, passenger name, and flight number.
+
+## Approach
+
+File Handling technique is used for data management.

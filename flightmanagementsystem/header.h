@@ -65,7 +65,7 @@ user getUserByNumber(int number);
 void addbalance(user person,int value);
 
 void useraccess(void);
-
+void checkmybalance(int uid);
 int countOccurrences(const char *name,int flightNum);
 void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity);
 void increasecapacity(int number,int total);
@@ -79,3 +79,4 @@ void addcapacity(int total,int flightnumber);
 void deleteRecords(const char *userName, int flightNum);
 
 void addrefund(int flightNum); // if the flight is cancelled add the refund to the users
+void deletebookedusers(int flightnum);// deletes the records in booked users.

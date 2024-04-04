@@ -112,7 +112,7 @@ FILE* modifyflight(FILE* fp, int number) {
             do {
                 printf("Enter the new year:");
                 scanf("%d", &flightrecord.S.year);
-            } while (!(flightrecord.S.year <= 2023));
+            } while (!(flightrecord.S.year > 2023));
 
             fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
@@ -173,9 +173,9 @@ FILE* deleteRecord(FILE* fp, int number) {
 
 
 int isalreadyregistered(int number) {
-    FILE *f = fopen("usernames.txt", "rb");
+    FILE *f = fopen("usernames.txt", "rb+");
     if (!f) {
-        printf("Error opening file for checking existing users.\n");
+        printf("Error opening file for checking existing users or the number is invalid.\n");
         exit(1); // Exit program if file cannot be opened
     }
 
@@ -327,7 +327,7 @@ void increasecapacity(int number,int total) {
 void booktickets(user person) {
    
     FILE *f;
-    f = fopen("Flights.txt", "r");
+    f = fopen("Flights.txt", "r+");
     if (!f) {
         printf("Error opening Flights.txt\n");
         return;
@@ -674,7 +674,35 @@ void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity) {
     }
 }
 
+void deletebookedusers(int flight_number){
+    FILE *fp,*temp;
 
+    fp=fopen("Booked.txt","r");
+    temp=fopen("temp.txt","w");
+
+    if(!(fp && temp)){
+        return;
+    }
+
+    userbooked record;
+
+
+
+    while((fread(&record,sizeof(userbooked),1,fp)==1)){
+        if(record.flightnum != flight_number){
+            fwrite(&record,sizeof(userbooked),1,temp);
+        }
+
+    }
+    remove("Booked.txt");
+    rename("temp.txt", "Booked.txt");
+
+    fclose(fp);
+    fclose(temp);
+
+
+
+}
 
 void adminaccess(void) {
     FILE *fp;
@@ -715,6 +743,7 @@ void adminaccess(void) {
                 scanf("%d", &flight_to_delete);
                 addrefund(flight_to_delete);// adds the refund to users
                 fp=deleteRecord(fp, flight_to_delete);
+                deletebookedusers(flight_to_delete); // deletes the record in the Booked.txt
                 break;
                 
             case 5:
@@ -757,10 +786,9 @@ void useraccess(void) {
         printf("3. Book Tickets\n");
         printf("4. Cancel Tickets\n");
         printf("5. Add Balance\n");
-
-        
         printf("6. Print Status of flights\n");
-        printf("7. Exit\n");
+        printf("7. Check your balance\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &user_choice);
         
@@ -784,7 +812,7 @@ void useraccess(void) {
                 scanf("%d",&pass);
 
                 if(!(person.password==pass)){
-                    printf("Wrong Password\n");
+                    printf("Wrong Password or not registered\n");
                     break;
                 }        
                 booktickets(person);
@@ -840,13 +868,25 @@ void useraccess(void) {
                 person=getUserByNumber(uni);
                 
                 
-                printf("Enter the flight number");
+                printf("Enter the flight number : ");
                 
                 scanf("%d",&flight_number);
 
                 mystatus(person,flight_number);   
                 break;         
             case 7:
+                printf("Please Enter your Unique number:");
+                scanf("%d",&uni);
+                if(isalreadyregistered(uni)){
+                    checkmybalance(uni);
+                    }
+                else{
+                    printf("Not registered");
+                    }                
+                break;         
+
+
+            case 8:
                 fclose(fl); // Close the file before returning
                 return;
             default:
@@ -857,7 +897,7 @@ void useraccess(void) {
 
 
 user getUserByNumber(int number) {
-    FILE *f = fopen("usernames.txt", "rb");
+    FILE *f = fopen("usernames.txt", "r+b");
     if (!f) {
         printf("Error opening file for reading users.\n");
         exit(1); // Exit program if file cannot be opened
@@ -874,6 +914,7 @@ user getUserByNumber(int number) {
     fclose(f);
     // If no user with the given unique number is found, return a user with all fields set to zero
     user emptyUser = { "", 0, 0, 0 };
+    printf("Returning Empty user as the user-id is not found\n");
     return emptyUser;
 }
 
@@ -918,6 +959,38 @@ user getUserByName(char Name[]) {
     user emptyUser = { "", 0, 0, 0 };
     return emptyUser;
 }
+
+void checkmybalance(int uid){
+    
+    FILE *f1=fopen("usernames.txt","rb");
+    
+    if(!f1){printf("Could't open\n");
+    return;
+    }
+    
+    int id=uid,pass;
+    user person = getUserByNumber(uid);
+
+    while(fread(&person,sizeof(user),1,f1)==1){
+        
+        if(person.unique_number==id){
+            printf("Enter your password:");
+            scanf("%d",&pass);
+                if(pass==person.password){
+                    printf("Your current balance is %d",person.balance);
+                    return;
+                }
+                else{
+                    printf("Wrong user id or password\n");
+                    return;
+                }
+            }
+        } 
+    printf("User not found\n");
+}
+    
+
+
 
 void addrefund(int flightNum){
 

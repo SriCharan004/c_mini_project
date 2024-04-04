@@ -10,11 +10,11 @@ int main() {
     int choice;
     
     while (1) {
-        printf("\n Access Menu:\n");
+        printf("\nAccess Menu:\n");
         printf("1. Admin Access\n");
         printf("2. User Access\n");
         printf("3. Exit\n");
-        printf("Enter your choice: ");
+        printf(" Enter your choice: ");
         scanf("%d", &choice);
         
         switch (choice) {

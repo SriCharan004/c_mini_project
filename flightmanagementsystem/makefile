@@ -1,4 +1,4 @@
-hello: main.o functions.o
+out: main.o functions.o
 	gcc -o out main.o functions.o
 main.o: main.c
 	gcc -c main.c

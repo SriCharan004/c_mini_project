@@ -68,4 +68,4 @@ There are several utility functions written for consistency in logic and work. T
 
 ## Approach
 
-File Handling technique is used for data management.
+File Handling is used

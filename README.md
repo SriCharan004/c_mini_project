@@ -5,7 +5,7 @@ This project implements a simple Flight Booking System using C programming langu
 ## Access
 
 There are two accesses:
-- Password protected admin access
+- Password-protected admin access
 - User access
 
 ## Admin Access
@@ -23,7 +23,7 @@ Admin has the key control and has the following abilities:
 
 ## User Access
 
-User has the following abilities:
+The user has the following abilities:
 
 ### User Abilities
 
@@ -31,7 +31,7 @@ User has the following abilities:
 - Register before booking tickets
 - Book tickets
 - Cancel tickets
-- Add to their balance
+- Add the amount to their balance
 - Know the status of the flight they have booked
 - Check their balance
 
@@ -49,7 +49,7 @@ There are several utility functions written for consistency in logic and work. T
 - Count occurrences of a name with a flight number
 - Deduct balance from a user's account
 - Increase the capacity of a flight
-- Add a refund for cancelled flights
+- Add a refund for canceled flights
 - Delete booked users for a specified flight number
 
 ## Structures

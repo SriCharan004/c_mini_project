@@ -52,9 +52,10 @@ void insertflight(FILE* fp) {     //Add flights
     printf("Enter the starting location : ");
     scanf("%s",flightrecord.from);
 
+    do{
     printf("Enter the destination : ");
     scanf("%s",flightrecord.destination);
-
+    }while(strcmp(flightrecord.destination,flightrecord.from)==0);
     fseek(fp, 0, SEEK_END);
     fwrite(&flightrecord, sizeof(Flight), 1, fp);
 }
@@ -149,13 +150,22 @@ FILE* deleteRecord(FILE* fp, int number) { // to delete the flight record
 
     Flight record;
     rewind(fp);
-
+    int found=0;
     while (fread(&record, sizeof(Flight), 1, fp)) {
         if (record.Number != number) {
             fwrite(&record, sizeof(Flight), 1, f1);
         }
-    }
+        else{
+            if(record.Number == number){
+                found=1;
+                printf("Deleted Successfully!!!\n");
+            }
+        }
 
+    }
+    if(found==0){
+        printf("Flight is not found\n");
+        }
     fclose(fp);
     fclose(f1);
 
@@ -954,7 +964,7 @@ void useraccess(void) {
                     break;}
                 person=getUserByNumber(uni);
 
-                printf("Enter your password:(\nNote: No space is allowed\n)");
+                printf("Enter your password:");
                 scanf("%d",&pass);
 
                 if(!(person.password==pass)){

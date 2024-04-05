@@ -618,7 +618,7 @@ void mystatus(user person, int flightnum){ // to print the status of his booked 
     }
 
     if (!found) {
-        printf("Flight %d is either canceled or not scheduled, if canceled the refund is already added\nOr either you have not booked the flight\n", flightnum);
+        printf("Flight %d is either cancelled or not scheduled, if cancelled the refund is already added\nOr either you have not booked the flight\n", flightnum);
     }
 
     fclose(u);
@@ -978,11 +978,18 @@ void useraccess(void) {
                 scanf("%d",&uni);
                 if(!isalreadyregistered(uni)){
                     printf("Number not found please register:");
-                    break;}
+                    break;
+                    }
+                
                 person=getUserByNumber(uni);
-
+                
                 printf("Enter the flight number:");
                 scanf("%d",&flightnum);
+                
+                if(!isflightnumberthere(flightnum)){
+                    printf("Flight doesn't exist.\n");
+                    break;
+                }
                 freq=countOccurrences(person.name,flightnum);
                 
 
@@ -1013,7 +1020,7 @@ void useraccess(void) {
                     addbalance(person,value);
                     printf("Amount Added succesfully");
                 }
-                else{printf("Wrong password");}
+                else{printf("Wrong password or wrong user id");}
 
                 break;
 

@@ -644,47 +644,6 @@ int countOccurrences(const char *name,int flightNum){ // to count how many times
     return count;
 }
 
-// void modifyCapacityByFlightNumber(int flightNumber, int additionalCapacity) {
-//     // Open the file for reading and writing
-//     FILE *file = fopen("Flights.txt", "r+b");
-//     if (file == NULL) {
-//         printf("Error opening file.\n");
-//         return;
-//     }
-
-//     // Read each flight record from the file, find the flight by flight number,
-//     // update its capacity, and write it back
-//     Flight flight;
-//     int found = 0;
-//     while (fread(&flight, sizeof(Flight), 1, file) == 1) {
-//         if (flight.Number == flightNumber) {
-//             // Update the capacity by adding the additional capacity
-//             flight.capacity += additionalCapacity;
-
-//             // Ensure that the capacity does not exceed the maximum capacity
-//             if (flight.capacity > flight.maxcapacity) {
-//                 flight.capacity = flight.maxcapacity;
-//                 printf("Warning: Capacity of flight %d exceeded the maximum capacity.\n", flight.Number);
-//             }
-
-//             // Move the file pointer back to the beginning of the current record
-//             fseek(file, -sizeof(Flight), SEEK_CUR);
-
-//             // Write the updated flight record back to the file
-//             fwrite(&flight, sizeof(Flight), 1, file);
-
-//             found = 1;
-//             break;
-//         }
-//     }
-
-//     // Close the file
-//     fclose(file);
-
-//     if (!found) {
-//         printf("Flight with number %d not found.\n", flightNumber);
-//     }
-// }
 
 void deletebookedusers(int flight_number){ // to delete the booked users after flight gets canceled
     FILE *fp,*temp;
@@ -1057,7 +1016,7 @@ void useraccess(void) {
 
 
             case 8:
-                fclose(fl); // Close the file before returning
+                fclose(fl); // Closing the file before returning
                 return;
             default:
                 printf("Invalid choice\n");

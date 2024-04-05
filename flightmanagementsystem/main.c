@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ADMIN_PASSWORD "admin123"
+#define ADMIN_PASSWORD "Dmaths@99#$"
 
 int main() {
     

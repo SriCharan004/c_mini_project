@@ -1029,7 +1029,13 @@ void useraccess(void) {
                 scanf("%d",&uni);
 
                 person=getUserByNumber(uni);
-                
+
+                printf("Enter your password:");
+                scanf("%d",&pass);
+                if(!(pass==person.password)){
+                    printf("Wrong Password");
+                    break;
+                }
                 
                 printf("Enter the flight number : ");
                 
@@ -1040,6 +1046,7 @@ void useraccess(void) {
             case 7:
                 printf("Please Enter your Unique number:");
                 scanf("%d",&uni);
+
                 if(isalreadyregistered(uni)){
                     checkmybalance(uni);
                     }

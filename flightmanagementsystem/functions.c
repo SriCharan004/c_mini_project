@@ -158,7 +158,7 @@ FILE* deleteRecord(FILE* fp, int number) { // to delete the flight record
         else{
             if(record.Number == number){
                 found=1;
-                printf("Deleted Successfully!!!\n");
+                printf("Flight record deleted Successfully!!!\n");
             }
         }
 
@@ -810,7 +810,7 @@ void addrefund(int flightNum){ // to add refund if the flight gets cancled
                
                person = getUserByNumber(record.unique_number);
                addbalance(person,price+100);
-               printf("Added successfully\n");
+               printf("Refund Added successfully\n");
         }
 
     }
@@ -873,7 +873,7 @@ void adminaccess(void) {
             case 7:
                 return;
             default:
-                printf("Invalid choice\n");
+                printf("\n Invalid choice\n");
         }
     }
 }
@@ -1019,7 +1019,7 @@ void useraccess(void) {
                 fclose(fl); // Closing the file before returning
                 return;
             default:
-                printf("Invalid choice\n");
+                printf("\n Invalid choice\n");
         }
     }
 }

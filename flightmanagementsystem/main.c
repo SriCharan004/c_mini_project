@@ -26,7 +26,7 @@ int main() {
                     printf("Admin access granted!\n");
                     adminaccess();
                 } else {
-                printf("Incorrect password. Access denied!\n Actions will be reported to Vamsi");
+                printf("Incorrect password. Access denied!\nYour actions will be reported to Vamsi");
                 }
                 
                 break;

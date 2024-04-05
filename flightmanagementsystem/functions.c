@@ -8,10 +8,10 @@
 void insertflight(FILE* fp) {     //Add flights
 
     Flight flightrecord;
-   
+    do{
     printf("Enter flight number: ");
     scanf("%d", &flightrecord.Number);
-
+    }while(isflightnumberthere(flightrecord.Number));
     printf("Enter the maximum capacity:");
     scanf("%d", &flightrecord.maxcapacity);
     flightrecord.capacity = flightrecord.maxcapacity;
@@ -81,12 +81,13 @@ FILE* modifyflight(FILE* fp, int number) { // to modify the time of the flight
 
     Flight flightrecord;
     rewind(fp);
-
+    int found=0;
     while (fread(&flightrecord, sizeof(Flight), 1, fp)) {
         if (flightrecord.Number != number) {
             fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
         else {
+            found=1;
             printf("Enter the schedule of the flight:\n");
 
             do {
@@ -116,6 +117,7 @@ FILE* modifyflight(FILE* fp, int number) { // to modify the time of the flight
 
             fwrite(&flightrecord, sizeof(Flight), 1, f1);
         }
+        if(found!=1){printf("Coudn't find the flight\n");}
     }
 
     fclose(fp);  // Close the original file pointer

@@ -420,7 +420,7 @@ void booktickets(user person) { // to book tickets
 
 
 void inccapacity(int number) {
-    FILE *fp = fopen("Flights.txt", "r+b");  // Open in read-write mode
+    FILE *fp = fopen("Flights.txt", "r+b");  // Open in read and then write mode
     if (!fp) {
         printf("Error opening file.\n");
         return;
